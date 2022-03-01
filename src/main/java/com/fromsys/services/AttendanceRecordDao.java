@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import static com.fromsys.services.PsqlDatasource.setupDataSource;
+import java.util.UUID;
 
 /*
  *  public static List<AttendanceRecord> queryLogin (int tEmployeeId)
@@ -20,24 +21,24 @@ import static com.fromsys.services.PsqlDatasource.setupDataSource;
 
 public class AttendanceRecordDao {
 
-    public static List<AttendanceRecord> queryLogin (int tEmployeeId) {
+    public static void queryLogin (UUID tEmployeeId) {
         List<AttendanceRecord> lstResult = null;
         // BasicDataSource set-up
 
         DataSource dsPsql = setupDataSource();
-        QueryRunner qrunEmployee = new QueryRunner();
+        QueryRunner qrunRecord = new QueryRunner();
 
         // JDBC + RSH set-up
         Connection connectStatus = null;
         ResultSetHandler<List<AttendanceRecord>> rshAttendanceRecord =
                 new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
+
         String querystrCreate = "INSERT INTO time_record " +
-                                "(employeeId, loginTimeStamp) " +
-                                "VALUES (?, CURRENT_TIMESTAMP)";
+                                "(employee_id, date, log_in) " +
+                                "VALUES (?, CURRENT_DATE, CURRENT_TIME)";
         try {
             connectStatus = dsPsql.getConnection();
-            lstResult = qrunEmployee.query(connectStatus, querystrCreate,
-                                           rshAttendanceRecord, tEmployeeId);
+            qrunRecord.update(connectStatus, querystrCreate, tEmployeeId);
         } catch (SQLException objException) {
             objException.printStackTrace();
         } finally {
@@ -45,11 +46,40 @@ public class AttendanceRecordDao {
                 if(connectStatus != null) DbUtils.close(connectStatus);
             } catch(Exception objException) {}
         }
-
-        return lstResult;
     } // public static List<Employee> queryLogin
 
-    public static List<AttendanceRecord> queryLogout (int tEmployeeId) {
+    public static void queryLogout (UUID tEmployeeId) {
+        List<AttendanceRecord> lstResult = null;
+        // BasicDataSource set-up
+        DataSource dsPsql = setupDataSource();
+        QueryRunner qrunRecord = new QueryRunner();
+
+        // JDBC + RSH set-up
+        Connection connectStatus = null;
+        ResultSetHandler<List<AttendanceRecord>> rshAttendanceRecord =
+                new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
+        // Check first if there is existing record for the day:
+        String queryifLoggedin = "SELECT * FROM time_record " +
+                                 "WHERE employee_id=? AND date=CURRENT_DATE" +
+                                 "AND log_out IS NULL";
+
+        String querystrUpdate = "UPDATE time_record " +
+                                "SET log_out=CURRENT_TIME " +
+                                "WHERE employee_id=? AND date=CURRENT_DATE" +
+                                "AND log_out IS NULL";
+        try {
+            connectStatus = dsPsql.getConnection();
+            qrunRecord.update(connectStatus, querystrUpdate, tEmployeeId);
+        } catch (SQLException objException) {
+            objException.printStackTrace();
+        } finally {
+            try {
+                if(connectStatus != null) DbUtils.close(connectStatus);
+            } catch(Exception objException) {}
+        }
+    } // public static List<Employee> queryLogout (...)
+
+    public static List<AttendanceRecord> queryUpdateHours (UUID tEmployeeId) {
         List<AttendanceRecord> lstResult = null;
         // BasicDataSource set-up
         DataSource dsPsql = setupDataSource();
@@ -59,12 +89,12 @@ public class AttendanceRecordDao {
         Connection connectStatus = null;
         ResultSetHandler<List<AttendanceRecord>> rshAttendanceRecord =
                 new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
-        String querystrUpdate = "UPDATE employee_details " +
-                                "SET logoutTimeStamp=CURRENT_TIMESTAMP" +
-                                "WHERE employeeId=?";
+        String querystrUpdate = "UPDATE time_record " +
+                                "SET total_hours=DATE_PART('hour', log_out - log_in )::int " +
+                                "WHERE employee_id=? AND date=CURRENT_DATE";
         try {
             connectStatus = dsPsql.getConnection();
-            lstResult = qrunEmployee.query(connectStatus, querystrUpdate,
+            qrunEmployee.update(connectStatus, querystrUpdate,
                     rshAttendanceRecord, tEmployeeId);
         } catch (SQLException objException) {
             objException.printStackTrace();
@@ -76,7 +106,7 @@ public class AttendanceRecordDao {
         return lstResult;
     } // public static List<Employee> queryLogout (...)
 
-    public static List<AttendanceRecord> queryUpdateHours (int tEmployeeId) {
+    public static List<AttendanceRecord> queryReadTimestamp (UUID tEmployeeId) {
         List<AttendanceRecord> lstResult = null;
         // BasicDataSource set-up
         DataSource dsPsql = setupDataSource();
@@ -86,35 +116,8 @@ public class AttendanceRecordDao {
         Connection connectStatus = null;
         ResultSetHandler<List<AttendanceRecord>> rshAttendanceRecord =
                 new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
-        String querystrUpdate = "UPDATE employee_details " +
-                                "SET totalHours=(days_diff * 24 + DATE_PART('hour',logoutTimestamp-loginTimestamp ), " +
-                                "WHERE employeeId=?";
-        try {
-            connectStatus = dsPsql.getConnection();
-            lstResult = qrunEmployee.query(connectStatus, querystrUpdate,
-                    rshAttendanceRecord, tEmployeeId);
-        } catch (SQLException objException) {
-            objException.printStackTrace();
-        } finally {
-            try {
-                if(connectStatus != null) DbUtils.close(connectStatus);
-            } catch(Exception objException) {}
-        }
-        return lstResult;
-    } // public static List<Employee> queryLogout (...)
-
-    public static List<AttendanceRecord> queryReadTimestamp (int tEmployeeId) {
-        List<AttendanceRecord> lstResult = null;
-        // BasicDataSource set-up
-        DataSource dsPsql = setupDataSource();
-        QueryRunner qrunEmployee = new QueryRunner();
-
-        // JDBC + RSH set-up
-        Connection connectStatus = null;
-        ResultSetHandler<List<AttendanceRecord>> rshAttendanceRecord =
-                new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
-        String querystrRead = "SELECT * FROM employee_details " +
-                              "WHERE employeeId=?";
+        String querystrRead = "SELECT * FROM time_record " +
+                              "WHERE employee_id=?";
         try {
             connectStatus = dsPsql.getConnection();
             lstResult = qrunEmployee.query(connectStatus, querystrRead,
@@ -130,7 +133,7 @@ public class AttendanceRecordDao {
         return lstResult;
     } // public static List<Employee> queryReadTimestamp (...)
 
-    public static List<AttendanceRecord> queryDeleteTimestamp (int tEmployeeId) {
+    public static List<AttendanceRecord> queryDeleteTimestamp (UUID tEmployeeId) {
         List<AttendanceRecord> lstResult = null;
         // BasicDataSource set-up
         DataSource dsPsql = setupDataSource();
@@ -140,8 +143,8 @@ public class AttendanceRecordDao {
         Connection connectStatus = null;
         ResultSetHandler<List<AttendanceRecord>> rshEmployee =
                 new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
-        String querystrDelete = "DELETE FROM employee_details " +
-                                "WHERE id=?";
+        String querystrDelete = "DELETE FROM time_record " +
+                                "WHERE employee_id=?";
         try {
             connectStatus = dsPsql.getConnection();
             lstResult = qrunEmployee.query(connectStatus, querystrDelete, rshEmployee, tEmployeeId);

@@ -1,28 +1,33 @@
 package com.fromsys.services;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.sql.Time;
+import java.sql.Date;
+import java.util.UUID;
 
 public class AttendanceRecord implements Serializable {
     // Properties
-    private int recordId;
-    private int employeeId;
-    private Timestamp loginTimestamp;
-    private Timestamp logoutTimestamp;
-    private int totalHours;
+    private int event_id;
+    private UUID employee_id;
+    private Date date;
+    private Time log_in;
+    private Time log_out;
+    private int total_hours;
     // Generator
     public AttendanceRecord(){}
     // Getters
-    public int getRecordId() { return recordId; }
-    public int getEmployeeId() { return employeeId; }
-    public Timestamp getLoginTimestamp() { return loginTimestamp; }
-    public Timestamp getLogoutTimestamp() { return logoutTimestamp; }
-    public int getTotalHours() { return totalHours; }
+    public int getEvent_id() { return event_id; }
+    public UUID getEmployee_id() { return employee_id; }
+    public Date getDate() { return date; }
+    public Time getLog_in() { return log_in; }
+    public Time getLog_out() { return log_out; }
+    public int getTotal_hours() { return total_hours; }
     // Setters
-    public void setRecordId(int tRecordId) { this.recordId = tRecordId; }
-    public void setEmployeeId(int tEmployeeId) { this.employeeId = tEmployeeId; }
-    public void setLoginTimestamp(Timestamp tLoginTimestamp) { this.loginTimestamp = tLoginTimestamp; }
-    public void setLogoutTimestamp(Timestamp tLogoutTimestamp) { this.logoutTimestamp = tLogoutTimestamp; }
-    public void setTotalHours(int tTotalHours) { this.totalHours = tTotalHours; }
+    public void setEvent_id(int tRecordId) { this.event_id = tRecordId; }
+    public void setEmployee_id(UUID tEmployeeId) { this.employee_id = tEmployeeId; }
+    public void setDate(Date tDate) { this.date = tDate; }
+    public void setLog_in(Time tLoginTimestamp) { this.log_in = tLoginTimestamp; }
+    public void setLog_out(Time tLogoutTimestamp) { this.log_out = tLogoutTimestamp; }
+    public void setTotal_hours(int tTotalHours) { this.total_hours = tTotalHours; }
 
 } // public class AttendanceRecord implements Serializable

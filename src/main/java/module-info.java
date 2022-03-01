@@ -12,4 +12,5 @@ module com.fromsys {
     requires java.management;
     requires java.logging;
     exports com.fromsys;
+    exports com.fromsys.services;
 }
