@@ -7,4 +7,12 @@ package com.fromsys.services;
 
 public class AttendanceRecordService {
 
+    public static void loginService(int tEmployeeId) {
+        //pass
+    }
+
+    public static void logoutService(int tEmployeeId) {
+        //pass
+    }
+
 } //public class AttendanceRecordService

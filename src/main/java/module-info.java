@@ -9,5 +9,7 @@ module com.fromsys {
     requires commons.dbcp2;
     requires org.apache.commons.pool2;
     requires commons.dbutils;
+    requires java.management;
+    requires java.logging;
     exports com.fromsys;
 }

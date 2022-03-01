@@ -4,7 +4,6 @@ import java.sql.*;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-
 public class PsqlDatasource {
     static final String JDBC_DRIVER = "org.postgresql.Driver";
     static final String hostName = "localhost";

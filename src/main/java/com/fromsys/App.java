@@ -102,7 +102,7 @@ public class App extends JFrame implements Runnable, ThreadFactory, ActionListen
             // Display string if there is a QR Code present:
             if (msgBuffer != null) {
                 Date objDate = new java.util.Date();
-                Timestamp tsLogDate = new Timestamp(objDate.getTime());
+                    Timestamp tsLogDate = new Timestamp(objDate.getTime());
                 txtResultField.setText(tsLogDate.toString());
                 try {
                     Thread.sleep(1800); // 5 seconds

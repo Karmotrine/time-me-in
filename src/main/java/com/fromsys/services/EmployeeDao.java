@@ -8,33 +8,33 @@ import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import java.util.UUID;
 
 import static com.fromsys.services.PsqlDatasource.setupDataSource;
 
-// Retrofit these stuff.
-// Configure CustomRowProcessor https://solegaonkar.github.io/JavaApacheDbUtils.html
-// Configure CustomDataSource
-
+// https://commons.apache.org/proper/commons-dbutils/apidocs/org/apache/commons/dbutils/QueryRunner.html
+// Fix some stuff in select/insert
+//
 public class EmployeeDao {
 
-    public static List<Employee> queryCreateEmployee (String tEmployeeName, String tEmployeeAddress,
+    public static void queryCreateEmployee (String tEmployeeName, String tEmployeeAddress,
                                                       String tEmployeeContact, String tEmployeeStatus) {
-        List<Employee> lstResult = null;
+
         // BasicDataSource set-up
         DataSource dsPsql = setupDataSource();
         QueryRunner qrunEmployee = new QueryRunner();
 
         // JDBC + RSH set-up
         Connection connectStatus = null;
-        ResultSetHandler<List<Employee>> rshEmployee = new BeanListHandler<Employee>(Employee.class);
-        String querystrCreate = "INSERT INTO employee_details " +
-                "(name, address, contact, employ_status)" +
-                "VALUES (?, ?, ?, ?)";
+        UUID tEmployeeId = UUID.randomUUID();
+        String querystrCreate = "INSERT INTO employee " +
+                                "(id, name, address, contact, employ_status)" +
+                                "VALUES (?, ?, ?, ?, ?)";
         try {
             connectStatus = dsPsql.getConnection();
-            lstResult = qrunEmployee.query(connectStatus, querystrCreate, rshEmployee,
-                                           tEmployeeName, tEmployeeAddress,
-                                           tEmployeeContact, tEmployeeStatus);
+            qrunEmployee.update(connectStatus, querystrCreate, tEmployeeId,
+                                tEmployeeName, tEmployeeAddress,
+                                tEmployeeContact, tEmployeeStatus);
         } catch (SQLException objException) {
             objException.printStackTrace();
         } finally {
@@ -43,7 +43,7 @@ public class EmployeeDao {
             } catch(Exception objException) {}
         }
 
-        return lstResult;
+        //return lstResult;
     } // public static List<Employee> queryCreateEmployee (...)
 
     public static List<Employee> queryReadEmployee (int tEmployeeId) {
@@ -55,7 +55,7 @@ public class EmployeeDao {
         // JDBC + RSH set-up
         Connection connectStatus = null;
         ResultSetHandler<List<Employee>> rshEmployee = new BeanListHandler<Employee>(Employee.class);
-        String querystrRead = "SELECT * FROM employee_details " +
+        String querystrRead = "SELECT * FROM employee " +
                               "WHERE id=?";
         try {
             connectStatus = dsPsql.getConnection();
@@ -71,7 +71,7 @@ public class EmployeeDao {
         return lstResult;
     } // public static List<Employee> queryReadEmployee (...)
 
-    public static List<Employee> queryUpdateEmployee (Employee tobjEmployee, int tEmployeeId, String tEmployeeName,
+    public static List<Employee> queryUpdateEmployee (int tEmployeeId, String tEmployeeName,
                                                       String tEmployeeAddress, String tEmployeeContact,
                                                       String tEmployeeStatus) {
         List<Employee> lstResult = null;
@@ -82,14 +82,14 @@ public class EmployeeDao {
         // JDBC + RSH set-up
         Connection connectStatus = null;
         ResultSetHandler<List<Employee>> rshEmployee = new BeanListHandler<Employee>(Employee.class);
-        String querystrUpdate = "UPDATE employee_details " +
-                                "SET id=?, name=?, address=?, contact=?, status=? " +
+        String querystrUpdate = "UPDATE employee " +
+                                "SET id=?, name=?, address=?, contact=?, employ_status=? " +
                                 "WHERE id=?";
         try {
             connectStatus = dsPsql.getConnection();
-            lstResult = qrunEmployee.query(connectStatus, querystrUpdate, rshEmployee,
+            qrunEmployee.update(connectStatus, querystrUpdate,
                                            tEmployeeId, tEmployeeName, tEmployeeAddress,
-                                           tEmployeeContact, tEmployeeStatus, tobjEmployee.getId());
+                                           tEmployeeContact, tEmployeeStatus, tEmployeeId);
         } catch (SQLException objException) {
             objException.printStackTrace();
         } finally {
@@ -109,11 +109,11 @@ public class EmployeeDao {
         // JDBC + RSH set-up
         Connection connectStatus = null;
         ResultSetHandler<List<Employee>> rshEmployee = new BeanListHandler<Employee>(Employee.class);
-        String querystrDelete = "DELETE FROM employee_details " +
+        String querystrDelete = "DELETE FROM employee " +
                                 "WHERE id=?";
         try {
             connectStatus = dsPsql.getConnection();
-            lstResult = qrunEmployee.query(connectStatus, querystrDelete, rshEmployee, tEmployeeId);
+            qrunEmployee.update(connectStatus, querystrDelete, tEmployeeId);
         } catch (SQLException objException) {
             objException.printStackTrace();
         } finally {
