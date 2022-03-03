@@ -9,12 +9,17 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import javax.swing.*;
 
+import com.fromsys.services.AttendanceRecordDao;
+import com.fromsys.services.AttendanceRecordService;
+import com.fromsys.services.Employee;
+import com.fromsys.services.EmployeeService;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 import com.github.sarxos.webcam.WebcamResolution;
@@ -26,6 +31,8 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
+
+import static com.fromsys.services.AttendanceRecordDao.*;
 
 
 public class App extends JFrame implements Runnable, ThreadFactory, ActionListener {
@@ -47,11 +54,11 @@ public class App extends JFrame implements Runnable, ThreadFactory, ActionListen
     public App() {
         super();
 
-        this.setLayout(new FlowLayout());
-        this.setTitle("FromSys | timeMeIn");
+        this.setLayout(new BoxLayout(getContentPane(),BoxLayout.PAGE_AXIS));
+        this.setTitle("Alphabet | timeMeIn");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Dimension size = new Dimension(640, 480);
+        Dimension size = new Dimension(432, 243);
 
         objWebcam = Webcam.getDefault();
         objWebcam.setCustomViewSizes(nonStandardResolutions);
@@ -101,11 +108,39 @@ public class App extends JFrame implements Runnable, ThreadFactory, ActionListen
 
             // Display string if there is a QR Code present:
             if (msgBuffer != null) {
-                Date objDate = new java.util.Date();
-                    Timestamp tsLogDate = new Timestamp(objDate.getTime());
-                txtResultField.setText(tsLogDate.toString());
+                SimpleDateFormat sdfDateTimeNow = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+                String strPrompt = " ";
+                UUID uuidEmployee = UUID.fromString(msgBuffer.toString());
+                Employee objScannedEmployee = EmployeeService.getEmployee(uuidEmployee).get(0);
+                if (queryHasRecord(uuidEmployee)) {
+                    if (queryIsLoggedin(uuidEmployee)) {
+                        queryLogout(uuidEmployee);
+                        queryUpdateHours(uuidEmployee);
+                        System.out.println("Logged Out.");
+                        strPrompt = String.format("Logged out.\nEmployee Name:%s\nDate & Time: %s",
+                                                   objScannedEmployee.getName(),
+                                                   sdfDateTimeNow.format(new java.util.Date()));
+                        txtResultField.setText(strPrompt);
+                    } else if (queryIsLoggedout(uuidEmployee)) {
+                        queryLogin(uuidEmployee);
+                        System.out.println("Logged in.");
+                        strPrompt = String.format("Logged in.\nEmployee Name:%s\nDate & Time: %s",
+                                objScannedEmployee.getName(),
+                                sdfDateTimeNow.format(new java.util.Date()));
+                        txtResultField.setText(strPrompt);
+                    }
+                } else {
+                    queryLogin(uuidEmployee);
+                    System.out.println("Logged in.");
+                    strPrompt = String.format("Logged in.\nEmployee Name:%s\nDate & Time: %s",
+                            objScannedEmployee.getName(),
+                            sdfDateTimeNow.format(new java.util.Date()));
+                    txtResultField.setText(strPrompt);
+                }
+
                 try {
-                    Thread.sleep(1800); // 5 seconds
+                    Thread.sleep(2500); // 2.5 seconds
+                    txtResultField.setText("Welcome | timeMeIn");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
