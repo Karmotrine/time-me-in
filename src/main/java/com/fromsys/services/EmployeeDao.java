@@ -43,7 +43,7 @@ public class EmployeeDao {
         }
 
         //return lstResult;
-    } // public static List<Employee> queryCreateEmployee (...)
+    } // public static void queryCreateEmployee (...)
 
     public static List<Employee> queryReadEmployee (UUID tEmployeeId) {
         List<Employee> lstResult = null;
@@ -68,7 +68,7 @@ public class EmployeeDao {
             } catch(Exception objException) {}
         }
         return lstResult;
-    } // public static List<Employee> queryReadEmployee (...)
+    } // public static List<Employee> queryReadEmployee (UUID tEmployeeId)
 
     public static void queryUpdateEmployee (UUID tEmployeeId, String tEmployeeName,
                                                       String tEmployeeAddress, String tEmployeeContact,
@@ -94,7 +94,7 @@ public class EmployeeDao {
                 if(connectStatus != null) DbUtils.close(connectStatus);
             } catch(Exception objException) {}
         }
-    } // public static List<Employee> queryUpdateEmployee (...)
+    } //  public static void queryUpdateEmployee (...)
 
     public static void queryDeleteEmployee (UUID tEmployeeId) {
         // BasicDataSource set-up
@@ -115,6 +115,6 @@ public class EmployeeDao {
                 if(connectStatus != null) DbUtils.close(connectStatus);
             } catch(Exception objException) {}
         }
-    } // public static List<Employee> queryDeleteEmployee (...)
+    } // public static void queryDeleteEmployee (...)
 
 } // public class EmployeeService

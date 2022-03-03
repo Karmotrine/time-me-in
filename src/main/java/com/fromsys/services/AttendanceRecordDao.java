@@ -11,18 +11,9 @@ import java.util.List;
 import static com.fromsys.services.PsqlDatasource.setupDataSource;
 import java.util.UUID;
 
-/*
- *  public static List<AttendanceRecord> queryLogin (int tEmployeeId)
- *  public static List<AttendanceRecord> queryLogout (int tEmployeeId)
- *  public static List<AttendanceRecord> queryUpdateHours (int tEmployeeId)
- *  public static List<AttendanceRecord> queryReadTimestamp (int tEmployeeId)
- *  public static List<AttendanceRecord> queryDeleteTimestamp (int tEmployeeId)
- */
-
 public class AttendanceRecordDao {
 
     public static void queryLogin (UUID tEmployeeId) {
-        List<AttendanceRecord> lstResult = null;
         // BasicDataSource set-up
 
         DataSource dsPsql = setupDataSource();
@@ -30,9 +21,6 @@ public class AttendanceRecordDao {
 
         // JDBC + RSH set-up
         Connection connectStatus = null;
-        ResultSetHandler<List<AttendanceRecord>> rshAttendanceRecord =
-                new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
-
         String querystrCreate = "INSERT INTO time_record " +
                                 "(employee_id, date, log_in) " +
                                 "VALUES (?, CURRENT_DATE, CURRENT_TIME)";
@@ -46,23 +34,15 @@ public class AttendanceRecordDao {
                 if(connectStatus != null) DbUtils.close(connectStatus);
             } catch(Exception objException) {}
         }
-    } // public static List<Employee> queryLogin
+    } // public static void queryLogin (UUID tEmployeeId)
 
     public static void queryLogout (UUID tEmployeeId) {
-        List<AttendanceRecord> lstResult = null;
         // BasicDataSource set-up
         DataSource dsPsql = setupDataSource();
         QueryRunner qrunRecord = new QueryRunner();
 
         // JDBC + RSH set-up
         Connection connectStatus = null;
-        ResultSetHandler<List<AttendanceRecord>> rshAttendanceRecord =
-                new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
-        // Check first if there is existing record for the day:
-        String queryifLoggedin = "SELECT * FROM time_record " +
-                                 "WHERE employee_id=? AND date=CURRENT_DATE" +
-                                 "AND log_out IS NULL";
-
         String querystrUpdate = "UPDATE time_record " +
                                 "SET log_out=CURRENT_TIME " +
                                 "WHERE employee_id=? AND date=CURRENT_DATE " +
@@ -77,9 +57,9 @@ public class AttendanceRecordDao {
                 if(connectStatus != null) DbUtils.close(connectStatus);
             } catch(Exception objException) {}
         }
-    } // public static List<Employee> queryLogout (...)
+    } // public static void queryLogout (UUID tEmployeeId)
 
-    public static List<AttendanceRecord> queryUpdateHours (UUID tEmployeeId) {
+    public static List<AttendanceRecord> queryReadTimestamp (UUID tEmployeeId) {
         List<AttendanceRecord> lstResult = null;
         // BasicDataSource set-up
         DataSource dsPsql = setupDataSource();
@@ -89,6 +69,30 @@ public class AttendanceRecordDao {
         Connection connectStatus = null;
         ResultSetHandler<List<AttendanceRecord>> rshAttendanceRecord =
                 new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
+        String querystrRead = "SELECT * FROM time_record " +
+                "WHERE employee_id=?";
+        try {
+            connectStatus = dsPsql.getConnection();
+            lstResult = qrunEmployee.query(connectStatus, querystrRead,
+                    rshAttendanceRecord, tEmployeeId);
+        } catch (SQLException objException) {
+            objException.printStackTrace();
+        } finally {
+            try {
+                if(connectStatus != null) DbUtils.close(connectStatus);
+            } catch(Exception objException) {}
+        }
+
+        return lstResult;
+    } // public static List<AttendanceRecord> queryReadTimestamp (UUID tEmployeeId)
+
+    public static void queryUpdateHours (UUID tEmployeeId) {
+        // BasicDataSource set-up
+        DataSource dsPsql = setupDataSource();
+        QueryRunner qrunEmployee = new QueryRunner();
+
+        // JDBC set-up
+        Connection connectStatus = null;
         String querystrUpdate = "UPDATE time_record " +
                                 "SET total_hours=DATE_PART('hour', log_out - log_in )::int " +
                                 "WHERE employee_id=? AND date=CURRENT_DATE";
@@ -102,25 +106,21 @@ public class AttendanceRecordDao {
                 if(connectStatus != null) DbUtils.close(connectStatus);
             } catch(Exception objException) {}
         }
-        return lstResult;
-    } // public static List<Employee> queryLogout (...)
+    } // public static void queryUpdateHours (UUID tEmployeeId)
 
-    public static List<AttendanceRecord> queryReadTimestamp (UUID tEmployeeId) {
-        List<AttendanceRecord> lstResult = null;
+
+    public static void queryDeleteTimestamp (UUID tEmployeeId) {
         // BasicDataSource set-up
         DataSource dsPsql = setupDataSource();
         QueryRunner qrunEmployee = new QueryRunner();
 
         // JDBC + RSH set-up
         Connection connectStatus = null;
-        ResultSetHandler<List<AttendanceRecord>> rshAttendanceRecord =
-                new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
-        String querystrRead = "SELECT * FROM time_record " +
-                              "WHERE employee_id=?";
+        String querystrDelete = "DELETE FROM time_record " +
+                "WHERE employee_id=?";
         try {
             connectStatus = dsPsql.getConnection();
-            lstResult = qrunEmployee.query(connectStatus, querystrRead,
-                                           rshAttendanceRecord, tEmployeeId);
+            qrunEmployee.update(connectStatus, querystrDelete, tEmployeeId);
         } catch (SQLException objException) {
             objException.printStackTrace();
         } finally {
@@ -128,9 +128,7 @@ public class AttendanceRecordDao {
                 if(connectStatus != null) DbUtils.close(connectStatus);
             } catch(Exception objException) {}
         }
-
-        return lstResult;
-    } // public static List<Employee> queryReadTimestamp (...)
+    } // public static void queryDeleteTimestamp (UUID tEmployeeId)
 
 
     public static Boolean queryIsLoggedin (UUID tEmployeeId) {
@@ -158,7 +156,7 @@ public class AttendanceRecordDao {
             } catch(Exception objException) {}
         }
         return (lstResult.size() != 0);
-    } // public static List<Employee> queryIsLoggedin (...)
+    } // public static Boolean queryIsLoggedin (UUID tEmployeeId)
 
     public static Boolean queryIsLoggedout (UUID tEmployeeId) {
         List<AttendanceRecord> lstResult = null;
@@ -185,7 +183,7 @@ public class AttendanceRecordDao {
             } catch(Exception objException) {}
         }
         return (lstResult.size() != 0);
-    } // public static List<Employee> queryIsLoggedin (...)
+    } // public static Boolean queryIsLoggedout (UUID tEmployeeId)
 
     public static Boolean queryHasRecord (UUID tEmployeeId) {
         List<AttendanceRecord> lstResult = null;
@@ -211,31 +209,6 @@ public class AttendanceRecordDao {
             } catch(Exception objException) {}
         }
         return (lstResult.size() != 0);
-    } // public static List<Employee> queryIsLoggedin (...)
-
-    public static List<AttendanceRecord> queryDeleteTimestamp (UUID tEmployeeId) {
-        List<AttendanceRecord> lstResult = null;
-        // BasicDataSource set-up
-        DataSource dsPsql = setupDataSource();
-        QueryRunner qrunEmployee = new QueryRunner();
-
-        // JDBC + RSH set-up
-        Connection connectStatus = null;
-        ResultSetHandler<List<AttendanceRecord>> rshEmployee =
-                new BeanListHandler<AttendanceRecord>(AttendanceRecord.class);
-        String querystrDelete = "DELETE FROM time_record " +
-                                "WHERE employee_id=?";
-        try {
-            connectStatus = dsPsql.getConnection();
-            lstResult = qrunEmployee.query(connectStatus, querystrDelete, rshEmployee, tEmployeeId);
-        } catch (SQLException objException) {
-            objException.printStackTrace();
-        } finally {
-            try {
-                if(connectStatus != null) DbUtils.close(connectStatus);
-            } catch(Exception objException) {}
-        }
-        return lstResult;
-    } // public static List<Employee> queryDeleteTimestamp (...)
+    } // public static Boolean queryHasRecord (UUID tEmployeeId)
 
 } // public class timeDAO
