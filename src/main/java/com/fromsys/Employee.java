@@ -1,4 +1,4 @@
-package com.fromsys.services;
+package com.fromsys;
 
 import java.io.Serializable;
 import java.util.UUID;

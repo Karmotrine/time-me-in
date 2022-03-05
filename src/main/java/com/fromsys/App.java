@@ -1,14 +1,10 @@
 package com.fromsys;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -16,10 +12,6 @@ import java.util.concurrent.ThreadFactory;
 
 import javax.swing.*;
 
-import com.fromsys.services.AttendanceRecordDao;
-import com.fromsys.services.AttendanceRecordService;
-import com.fromsys.services.Employee;
-import com.fromsys.services.EmployeeService;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 import com.github.sarxos.webcam.WebcamResolution;
@@ -32,7 +24,7 @@ import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 
-import static com.fromsys.services.AttendanceRecordDao.*;
+import static com.fromsys.AttendanceRecordDao.*;
 
 
 public class App extends JFrame implements Runnable, ThreadFactory, ActionListener {
@@ -76,6 +68,7 @@ public class App extends JFrame implements Runnable, ThreadFactory, ActionListen
         add(txtResultField);
 
         this.pack();
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
         exeThreadExecutor.execute(this);
     }

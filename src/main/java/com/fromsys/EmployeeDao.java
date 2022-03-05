@@ -1,8 +1,7 @@
-package com.fromsys.services;
+package com.fromsys;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -10,7 +9,7 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import java.util.UUID;
 
-import static com.fromsys.services.PsqlDatasource.setupDataSource;
+import static com.fromsys.PsqlDatasource.*;
 
 // https://commons.apache.org/proper/commons-dbutils/apidocs/org/apache/commons/dbutils/QueryRunner.html
 // Fix some stuff in select/insert
@@ -70,9 +69,28 @@ public class EmployeeDao {
         return lstResult;
     } // public static List<Employee> queryReadEmployee (UUID tEmployeeId)
 
+    public static ResultSet queryViewAll () {
+        // JDBC + RSH set-up
+        Connection connectStatus = null;
+        ResultSet lstResult = null;
+        String querystrRead = "SELECT * FROM employee";
+        try {
+            connectStatus = DriverManager.getConnection(PsqlDatasource.psqlURL,dbUsername,dbPassword);
+            Statement stmtView = connectStatus.createStatement();
+            lstResult = stmtView.executeQuery(querystrRead);
+        } catch (SQLException objException) {
+            objException.printStackTrace();
+        } finally {
+            try {
+                if(connectStatus != null) connectStatus.close();
+            } catch(Exception objException) {}
+        }
+        return lstResult;
+    } // public static ResultSet queryViewAll ()
+
     public static void queryUpdateEmployee (UUID tEmployeeId, String tEmployeeName,
-                                                      String tEmployeeAddress, String tEmployeeContact,
-                                                      String tEmployeeStatus) {
+                                            String tEmployeeAddress, String tEmployeeContact,
+                                            String tEmployeeStatus) {
         // BasicDataSource set-up
         DataSource dsPsql = setupDataSource();
         QueryRunner qrunEmployee = new QueryRunner();
@@ -80,13 +98,14 @@ public class EmployeeDao {
         // JDBC set-up
         Connection connectStatus = null;
         String querystrUpdate = "UPDATE employee " +
-                                "SET id=?, name=?, address=?, contact=?, employ_status=? " +
+                                "SET name=?, address=?, contact=?, employ_status=? " +
                                 "WHERE id=?";
         try {
             connectStatus = dsPsql.getConnection();
             qrunEmployee.update(connectStatus, querystrUpdate,
-                                tEmployeeId, tEmployeeName, tEmployeeAddress,
-                                tEmployeeContact, tEmployeeStatus, tEmployeeId);
+                                tEmployeeName, tEmployeeAddress,
+                                tEmployeeContact, tEmployeeStatus,
+                                tEmployeeId);
         } catch (SQLException objException) {
             objException.printStackTrace();
         } finally {

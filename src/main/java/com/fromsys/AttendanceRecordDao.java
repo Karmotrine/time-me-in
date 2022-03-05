@@ -1,15 +1,15 @@
-package com.fromsys.services;
+package com.fromsys;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
-import static com.fromsys.services.PsqlDatasource.setupDataSource;
 import java.util.UUID;
+
+import static com.fromsys.PsqlDatasource.*;
 
 public class AttendanceRecordDao {
 
@@ -58,6 +58,25 @@ public class AttendanceRecordDao {
             } catch(Exception objException) {}
         }
     } // public static void queryLogout (UUID tEmployeeId)
+
+    public static ResultSet queryViewAll () {
+        // JDBC + RSH set-up
+        Connection connectStatus = null;
+        ResultSet lstResult = null;
+        String querystrRead = "SELECT * FROM time_record";
+        try {
+            connectStatus = DriverManager.getConnection(PsqlDatasource.psqlURL,dbUsername,dbPassword);
+            Statement stmtView = connectStatus.createStatement();
+            lstResult = stmtView.executeQuery(querystrRead);
+        } catch (SQLException objException) {
+            objException.printStackTrace();
+        } finally {
+            try {
+                if(connectStatus != null) connectStatus.close();
+            } catch(Exception objException) {}
+        }
+        return lstResult;
+    } // public static ResultSet queryViewAll ()
 
     public static List<AttendanceRecord> queryReadTimestamp (UUID tEmployeeId) {
         List<AttendanceRecord> lstResult = null;

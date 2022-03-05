@@ -1,4 +1,4 @@
-package com.fromsys.services;
+package com.fromsys;
 
 /* File process:
  *  1. POJO/Bean => JSON => argon2(JSON) => QR
