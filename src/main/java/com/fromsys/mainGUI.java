@@ -204,7 +204,7 @@ public class mainGUI extends javax.swing.JFrame {
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
-                .addComponent(btnCreateEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnCreateEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28))
         );
 
@@ -221,6 +221,8 @@ public class mainGUI extends javax.swing.JFrame {
         jScrollPane9.setViewportView(jtblEmployeeView);
 
         btnEmpViewRefresh.setText("Refresh");
+        btnEmpViewRefresh.setMaximumSize(new java.awt.Dimension(127, 25));
+        btnEmpViewRefresh.setMinimumSize(new java.awt.Dimension(127, 25));
         btnEmpViewRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEmpViewRefreshActionPerformed(evt);
@@ -236,8 +238,8 @@ public class mainGUI extends javax.swing.JFrame {
                 .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(pnlEmployeeViewLayout.createSequentialGroup()
-                .addGap(207, 207, 207)
-                .addComponent(btnEmpViewRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(215, 215, 215)
+                .addComponent(btnEmpViewRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlEmployeeViewLayout.setVerticalGroup(
@@ -245,8 +247,8 @@ public class mainGUI extends javax.swing.JFrame {
             .addGroup(pnlEmployeeViewLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
-                .addComponent(btnEmpViewRefresh)
+                .addGap(18, 18, 18)
+                .addComponent(btnEmpViewRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -355,7 +357,7 @@ public class mainGUI extends javax.swing.JFrame {
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33)
-                .addComponent(btnUpdateEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnUpdateEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -401,7 +403,7 @@ public class mainGUI extends javax.swing.JFrame {
                     .addComponent(jLabel11)
                     .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnDeleteEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnDeleteEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22))
         );
 
@@ -452,8 +454,8 @@ public class mainGUI extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jTabbedPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(212, 212, 212)
-                .addComponent(btnTimeRecordRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(208, 208, 208)
+                .addComponent(btnTimeRecordRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -461,8 +463,8 @@ public class mainGUI extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jTabbedPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnTimeRecordRefresh)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(btnTimeRecordRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tabpaneAttendance.addTab("Attendance", jPanel4);
@@ -610,10 +612,14 @@ public class mainGUI extends javax.swing.JFrame {
        Employee tobjEmployee;
        String strQrUuid = txtQrEmployeeName.getText();
        String strFilename = txtQrOutputName.getText();
+       txtQrEmployeeName.setText("");
+       txtQrOutputName.setText("");
        UUID uuidEmployeeId;
        try {
             uuidEmployeeId = UUID.fromString(strQrUuid);
        } catch (IllegalArgumentException exception) {
+            txtQrEmployeeName.setText("");
+            txtQrOutputName.setText("");
            lblGlobalStatus.setText("QR Generation Failed: Invalid Employee Id format");
            JOptionPane.showMessageDialog(rootPane,
                                          "QR Generation Failed: Invalid Employee Id format",
@@ -626,7 +632,11 @@ public class mainGUI extends javax.swing.JFrame {
            tobjEmployee = EmployeeService.getEmployee(uuidEmployeeId).get(0);
            EmployeeService.generateQR(uuidEmployeeId, strFilename);
            lblGlobalStatus.setText("QR Generated");
+            txtQrEmployeeName.setText("");
+            txtQrOutputName.setText("");
        } else {
+            txtQrEmployeeName.setText("");
+            txtQrOutputName.setText("");
            lblGlobalStatus.setText("QR Generation Failed: Employee Id not found.");
             JOptionPane.showMessageDialog(rootPane,
                                          "QR Generation Failed: Employee Id not found.",
@@ -643,6 +653,10 @@ public class mainGUI extends javax.swing.JFrame {
        EmployeeService.createEmployee(strFormName, strFormAddress,
                                       strFormContact, strFormStatus);
        lblGlobalStatus.setText("Employee data created");
+       txtCreateName.setText("");
+       txtCreateAddress.setText("");
+       txtCreateContact.setText("");
+       txtCreateEmpStatus.setText("");
     }//GEN-LAST:event_btnCreateEmployeeActionPerformed
 
     private void btnTimeRecordRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimeRecordRefreshActionPerformed
@@ -664,6 +678,7 @@ public class mainGUI extends javax.swing.JFrame {
         try {
             uuidEmployeeId = UUID.fromString(strEmployeeId);
         } catch (IllegalArgumentException exception) {
+            txtDeleteEmployeeId.setText("");
             lblGlobalStatus.setText("Employee Deletion Failed: Invalid Employee Id format");
             JOptionPane.showMessageDialog(rootPane,
                                          "Employee Deletion Failed: Invalid Employee Id format",
@@ -675,7 +690,9 @@ public class mainGUI extends javax.swing.JFrame {
         if (numQueryResult > 0) {
             EmployeeService.deleteEmployee(uuidEmployeeId);
             lblGlobalStatus.setText("Employee data deleted");
+            txtDeleteEmployeeId.setText("");
         } else {
+            txtDeleteEmployeeId.setText("");
             lblGlobalStatus.setText("Employee Deletion Failed: Employee Id not found");
             JOptionPane.showMessageDialog(rootPane,
                                          "Employee Deletion Failed: Employee Id not found",
@@ -687,9 +704,18 @@ public class mainGUI extends javax.swing.JFrame {
     private void btnUpdateEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateEmployeeActionPerformed
         String strUpdateId = txtUpdateId.getText();
         UUID uuidEmployeeId;
+        String strUpdateName = txtUpdateName.getText();
+        String strUpdateAddress = txtUpdateAddress.getText();
+        String strUpdateContact = txtUpdateContact.getText();
+        String strUpdateStatus = txtUpdateStatus.getText();
         try {
             uuidEmployeeId = UUID.fromString(strUpdateId);
         } catch (IllegalArgumentException exception) {
+            txtUpdateId.setText("");
+            txtUpdateName.setText("");
+            txtUpdateAddress.setText("");
+            txtUpdateContact.setText("");
+            txtUpdateStatus.setText("");
             lblGlobalStatus.setText("Employee Update Failed: Invalid Employee Id format");
             JOptionPane.showMessageDialog(rootPane,
                                          "Employee Update Failed: Invalid Employee Id format",
@@ -697,17 +723,23 @@ public class mainGUI extends javax.swing.JFrame {
                                          JOptionPane.ERROR_MESSAGE);
            return;
         }
-        String strUpdateName = txtUpdateName.getText();
-        String strUpdateAddress = txtUpdateAddress.getText();
-        String strUpdateContact = txtUpdateContact.getText();
-        String strUpdateStatus = txtUpdateStatus.getText();
         int numQueryResult = EmployeeService.getEmployee(uuidEmployeeId).size();
         if (numQueryResult > 0) {
             lblGlobalStatus.setText("Employee data updated");
             EmployeeService.updateEmployee(uuidEmployeeId, strUpdateName,
                                            strUpdateAddress, strUpdateContact,
                                            strUpdateStatus);
+            txtUpdateId.setText("");
+            txtUpdateName.setText("");
+            txtUpdateAddress.setText("");
+            txtUpdateContact.setText("");
+            txtUpdateStatus.setText("");
         } else {
+            txtUpdateId.setText("");
+            txtUpdateName.setText("");
+            txtUpdateAddress.setText("");
+            txtUpdateContact.setText("");
+            txtUpdateStatus.setText("");
             lblGlobalStatus.setText("Employee Update Failed: Employee id not found");
             JOptionPane.showMessageDialog(rootPane,
                                          "Employee Update Failed: Employee id not found",

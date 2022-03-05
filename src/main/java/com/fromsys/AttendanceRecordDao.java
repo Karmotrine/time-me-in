@@ -63,7 +63,7 @@ public class AttendanceRecordDao {
         // JDBC + RSH set-up
         Connection connectStatus = null;
         ResultSet lstResult = null;
-        String querystrRead = "SELECT * FROM time_record";
+        String querystrRead = "SELECT * FROM time_record ORDER BY event_id DESC";
         try {
             connectStatus = DriverManager.getConnection(PsqlDatasource.psqlURL,dbUsername,dbPassword);
             Statement stmtView = connectStatus.createStatement();

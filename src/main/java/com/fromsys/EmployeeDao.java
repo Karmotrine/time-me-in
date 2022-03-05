@@ -122,11 +122,14 @@ public class EmployeeDao {
 
         // JDBC set-up
         Connection connectStatus = null;
-        String querystrDelete = "DELETE FROM employee " +
-                                "WHERE id=?";
+        String querystrDeleteRecord = "DELETE FROM time_record " +
+                                      "WHERE employee_id=?";
+        String querystrDeleteEmployee = "DELETE FROM employee " +
+                                        "WHERE id=?";
         try {
             connectStatus = dsPsql.getConnection();
-            qrunEmployee.update(connectStatus, querystrDelete, tEmployeeId);
+            qrunEmployee.update(connectStatus, querystrDeleteRecord, tEmployeeId);
+            qrunEmployee.update(connectStatus, querystrDeleteEmployee, tEmployeeId);
         } catch (SQLException objException) {
             objException.printStackTrace();
         } finally {
