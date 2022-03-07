@@ -238,7 +238,7 @@ public class mainGUI extends javax.swing.JFrame {
                 .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(pnlEmployeeViewLayout.createSequentialGroup()
-                .addGap(215, 215, 215)
+                .addGap(228, 228, 228)
                 .addComponent(btnEmpViewRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
