@@ -10,10 +10,6 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import java.util.UUID;
 
 import static com.fromsys.PsqlDatasource.*;
-
-// https://commons.apache.org/proper/commons-dbutils/apidocs/org/apache/commons/dbutils/QueryRunner.html
-// Fix some stuff in select/insert
-//
 public class EmployeeDao {
 
     public static void queryCreateEmployee (UUID tEmployeeId, String tEmployeeName,

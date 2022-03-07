@@ -1,5 +1,13 @@
 package com.fromsys;
 
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.WebcamResolution;
+import com.google.zxing.*;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
+
+import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
@@ -7,19 +15,10 @@ import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-import javax.swing.*;
-import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.WebcamPanel;
-import com.github.sarxos.webcam.WebcamResolution;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.LuminanceSource;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.NotFoundException;
-import com.google.zxing.Result;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-import com.google.zxing.common.HybridBinarizer;
+
 import static com.fromsys.AttendanceRecordDao.*;
-import static com.fromsys.AttendanceRecordService.*;
+import static com.fromsys.AttendanceRecordService.loginService;
+import static com.fromsys.AttendanceRecordService.logoutService;
 
 
 public class App extends JFrame implements Runnable, ThreadFactory {
@@ -101,7 +100,6 @@ public class App extends JFrame implements Runnable, ThreadFactory {
                 if (queryHasRecord(uuidEmployee)) {
                     if (queryIsLoggedin(uuidEmployee)) {
                         logoutService(uuidEmployee);
-                        queryUpdateHours(uuidEmployee);
                         System.out.println("Logged Out.");
                         strPrompt = String.format("Logged out.\nEmployee Name:%s\nDate & Time: %s",
                                                    objScannedEmployee.getName(),

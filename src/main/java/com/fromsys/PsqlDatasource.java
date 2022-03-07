@@ -1,6 +1,5 @@
 package com.fromsys;
 
-import java.sql.*;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 
@@ -21,10 +20,5 @@ public class PsqlDatasource {
         bdsPsql.setPassword(dbPassword);
         return bdsPsql;
     } //  public static DataSource setupDataSource
-
-    public static void shutdownDataSource(DataSource tDataSource) throws SQLException {
-        BasicDataSource bdsPsql = (BasicDataSource) tDataSource;
-        bdsPsql.close();
-    } // public static void shutdownDataSource(DataSource tDataSource)
 
 } // public class PsqlDriver

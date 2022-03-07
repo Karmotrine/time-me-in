@@ -1,18 +1,11 @@
 package com.fromsys;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
-
-/* File process:
- *  1. POJO/Bean => JSON => argon2(JSON) => QR
- *  2. QR => JSON => argon2.verify(JSON) => POJO/Bean
- */
 
 public class EmployeeService {
 
@@ -27,13 +20,7 @@ public class EmployeeService {
             objException.printStackTrace();
         }
         System.out.println("QR Generated.");
-    }
-
-
-    public static int decodeQR(String tstrEmployeeId)  {
-        int intEmployeeId = Integer.parseInt(tstrEmployeeId);
-        return intEmployeeId;
-    }
+    } // public static void generateQR(UUID tEmployeeId, String tFilename)
 
     public static void createEmployee(String tEmployeeName, String tEmployeeAddress,
                                       String tEmployeeContact, String tEmployeeStatus) {
@@ -41,8 +28,7 @@ public class EmployeeService {
         EmployeeDao.queryCreateEmployee(tEmployeeId, tEmployeeName,
                                         tEmployeeAddress, tEmployeeContact,
                                         tEmployeeStatus);
-        //do more...
-    }
+    } // public static void createEmployee(...)
 
     public static List<Employee> getEmployee(UUID tEmployeeId) {
         List<Employee> tobjEmployee = EmployeeDao.queryReadEmployee(tEmployeeId);
